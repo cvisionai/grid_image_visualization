@@ -80,7 +80,7 @@ d3
 ;
 
 function updateData() {
-    d3.json("http://localhost:9000/images2.json").then(function(data){
+    d3.json("http://localhost:9000/images3.json").then(function(data){
             createVis(data);
     });
 }
@@ -94,7 +94,7 @@ var grid = d3.select("body")
 function createVis(my_data) {
   chars = grid
     .selectAll("div")
-    .data(my_data.images, function(d) {return [d.imgurl, d.imgclass]})
+    .data(my_data.images, function(d) {return d.imgurl})
     .join(
       enter => {enter
         .append("div")
@@ -109,57 +109,68 @@ function createVis(my_data) {
           return d.imgclass;
         })
         ;
-        char_click = enter.selectAll(".char")
-        .on("click", function(d, i) {
-        if(this.className.split(' ').indexOf('open') > -1 ){
-        d3.select(this).classed("open", false);
-        }else{
-        gridColumns = window.getComputedStyle(this.parentElement).gridTemplateColumns.split(" ");
-        gridRows = window.getComputedStyle(this.parentElement).gridTemplateRows.split(" ");
-        numColumns = gridColumns.length;
-        numRows = gridRows.length;
-        xPosInGrid = this.getBoundingClientRect().left - this.parentElement.getBoundingClientRect().left;
-        yPosInGrid = this.getBoundingClientRect().top - this.parentElement.getBoundingClientRect().top;
-        gridRowHeight = parseFloat(gridRows[0]) + parseFloat(window.getComputedStyle(this.parentElement).gridRowGap);
-        gridColumnWidth = parseFloat(gridColumns[0]) + parseFloat(window.getComputedStyle(this.parentElement).gridColumnGap);
-        thisRow = Math.round(yPosInGrid/gridRowHeight) +1;
-        thisColumn = Math.round(xPosInGrid/gridColumnWidth) +1;
-        thisPortrait = this.getElementsByClassName("portrait")[0];
-        if(thisPortrait)thisPortrait.setAttribute("src",thisPortrait.getAttribute("data-src"));
-        d3.selectAll(".char").classed("open", false);
-        d3.selectAll(".char").style("grid-row-start", "auto");
-        d3.selectAll(".char").style("grid-column-start", "auto");
-        d3.select(this).classed("open", true);
-        divWidth = parseFloat(window.getComputedStyle(this).gridColumnEnd.split(" ")[1]);
-        divHeight = parseFloat(window.getComputedStyle(this).gridRowEnd.split(" ")[1]);
-        if(thisRow+divHeight>numRows)thisRow = 1 + numRows-divHeight;
-        if(thisColumn+divWidth>numColumns)thisColumn = 1 + numColumns-divWidth;
-        d3.select(this).style("grid-row-start", thisRow)
-        d3.select(this).style("grid-column-start", thisColumn)
-        }
-        })
-        ;  
+        char_click = enter
+          .selectAll(".char")
+          .on("click", function(d, i) {
+            if(this.className.split(' ').indexOf('open') > -1 ){
+              d3.select(this).classed("open", false);
+            }else{
+              gridColumns = window.getComputedStyle(this.parentElement).gridTemplateColumns.split(" ");
+              gridRows = window.getComputedStyle(this.parentElement).gridTemplateRows.split(" ");
+              numColumns = gridColumns.length;
+              numRows = gridRows.length;
+              xPosInGrid = this.getBoundingClientRect().left - this.parentElement.getBoundingClientRect().left;
+              yPosInGrid = this.getBoundingClientRect().top - this.parentElement.getBoundingClientRect().top;
+              gridRowHeight = parseFloat(gridRows[0]) + parseFloat(window.getComputedStyle(this.parentElement).gridRowGap);
+              gridColumnWidth = parseFloat(gridColumns[0]) + parseFloat(window.getComputedStyle(this.parentElement).gridColumnGap);
+              thisRow = Math.round(yPosInGrid/gridRowHeight) +1;
+              thisColumn = Math.round(xPosInGrid/gridColumnWidth) +1;
+              thisPortrait = this.getElementsByClassName("portrait")[0];
+              if(thisPortrait)thisPortrait.setAttribute("src",thisPortrait.getAttribute("data-src"));
+              d3.selectAll(".char").classed("open", false);
+              d3.selectAll(".char").style("grid-row-start", "auto");
+              d3.selectAll(".char").style("grid-column-start", "auto");
+              d3.select(this).classed("open", true);
+              divWidth = parseFloat(window.getComputedStyle(this).gridColumnEnd.split(" ")[1]);
+              divHeight = parseFloat(window.getComputedStyle(this).gridRowEnd.split(" ")[1]);
+              if(thisRow+divHeight>numRows)thisRow = 1 + numRows-divHeight;
+              if(thisColumn+divWidth>numColumns)thisColumn = 1 + numColumns-divWidth;
+              d3.select(this).style("grid-row-start", thisRow)
+              d3.select(this).style("grid-column-start", thisColumn)
+            }
+          });  
       },
-      update => {update.select("h2")
+      update => {
+        update.select(".charContent").remove();
+        update.append("div")
+        .attr("class", "charContent")
+        .append("h2")
         .text(function(d,i){
           return d.imgclass;
-        });
-        console.log(d);
+        })
       },
       exit => exit.remove());
-
 }
 
   d3
    .select("#fish")
    .on("click", function () {
-      d3.select(".open").select(".charContent").remove();
-      d3.select(".open").append("div")
-     .attr("class", "charContent").append("h2")
-     .text(function(d,i){
-        return d.imgurl;
-     })
-   })
+      d3.selectAll(".char").sort(function(a, b) {
+        let count = 0;
+        if(a['imgclass'] == 'fish' && b['imgclass'] != 'fish'){
+            console.log("greater than");
+            count=-1;
+        };
+        if(b['imgclass'] == 'fish' && a['imgclass'] != 'fish'){
+            console.log("less than");
+            count=1;
+        };   
+        return count;
+      });
+      d3.selectAll(".char").classed("open", false);
+      d3.selectAll(".char").style("grid-row-start", "auto");
+      d3.selectAll(".char").style("grid-column-start", "auto");
+    })
 ;
   d3
    .select("#crab")
