@@ -1,5 +1,5 @@
 <!-- HTML -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.5.0/d3.min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
 <!-- HTML -->
 <link href="https://fonts.googleapis.com/css?family=Trirong:100,200" rel="stylesheet">
 <!-- HTML -->
@@ -10,6 +10,7 @@
       <a id="fish" >Fish</a> |
       <a id="crab" >Crab</a> |
       <a id="ray" >Ray</a> |
+      <a id="update_data" >Update</a> |
   </div>
 <style>
 body {
@@ -66,44 +67,53 @@ body, a {
 </style>
 
 <script>
-   //Load in character data
-d3.json("http://localhost:9000/images.json", function(data) {
-  grid = d3.select("body")
+//Load in character data
+d3.json("http://localhost:9000/images.json").then(function(data){
+    createVis(data);
+});
+
+d3
+   .select("#update_data")
+   .on("click", function () {
+        updateData();
+   })
+;
+
+function updateData() {
+    d3.json("http://localhost:9000/images2.json").then(function(data){
+            createVis(data);
+    });
+}
+
+var grid = d3.select("body")
     .append("div")
     .attr("id", "grid")
     .attr("class", "grid")
   ;
+  
+function createVis(my_data) {
   chars = grid
     .selectAll("div")
-    .data(data.images)
-    .enter()
-    .append("div")
-    .attr("class", "char")
-  ;
-  chars
-    .style("background-image", function(d){
-      return 'url("'+d.imgurl+'?raw=true")';
-    })
-  ;
-  content = chars
-     .append("div")
-     .attr("class", "charContent")
-  ;
-  content
-     .append("h2")
-     .text(function(d,i){
-        return d.imgclass;
-     })
-  ;
-  chars
-    .on("click", function(d, i) {
-      if(this.className.split(' ').indexOf('open') > -1 ){
+    .data(my_data.images, function(d) {return [d.imgurl, d.imgclass]})
+    .join(
+      enter => {enter
+        .append("div")
+        .attr("class", "char")
+        .style("background-image", function(d){
+          return 'url("'+d.imgurl+'?raw=true")';
+          })
+        .append("div")
+        .attr("class", "charContent")
+        .append("h2")
+        .text(function(d,i){
+          return d.imgclass;
+        })
+        ;
+        char_click = enter.selectAll(".char")
+        .on("click", function(d, i) {
+        if(this.className.split(' ').indexOf('open') > -1 ){
         d3.select(this).classed("open", false);
-        //d3.select(this).select("h2")
-        //.text(function(d,i){
-        //    return d.imgclass;
-        //});
-      }else{
+        }else{
         gridColumns = window.getComputedStyle(this.parentElement).gridTemplateColumns.split(" ");
         gridRows = window.getComputedStyle(this.parentElement).gridTemplateRows.split(" ");
         numColumns = gridColumns.length;
@@ -126,9 +136,20 @@ d3.json("http://localhost:9000/images.json", function(data) {
         if(thisColumn+divWidth>numColumns)thisColumn = 1 + numColumns-divWidth;
         d3.select(this).style("grid-row-start", thisRow)
         d3.select(this).style("grid-column-start", thisColumn)
-      }
-    })
-  ;
+        }
+        })
+        ;  
+      },
+      update => {update.select("h2")
+        .text(function(d,i){
+          return d.imgclass;
+        });
+        console.log(d);
+      },
+      exit => exit.remove());
+
+}
+
   d3
    .select("#fish")
    .on("click", function () {
@@ -152,7 +173,4 @@ d3.json("http://localhost:9000/images.json", function(data) {
       d3.select(".open").select("h2").text("ray");
    })
 ;
-})
-
-
 </script>
