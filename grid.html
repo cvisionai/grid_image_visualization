@@ -172,16 +172,44 @@ function createVis(my_data) {
       d3.selectAll(".char").style("grid-column-start", "auto");
     })
 ;
-  d3
+d3
    .select("#crab")
    .on("click", function () {
-      d3.select(".open").select("h2").text("crab");
-   })
+      d3.selectAll(".char").sort(function(a, b) {
+        let count = 0;
+        if(a['imgclass'] == 'crab' && b['imgclass'] != 'crab'){
+            console.log("greater than");
+            count=-1;
+        };
+        if(b['imgclass'] == 'crab' && a['imgclass'] != 'crab'){
+            console.log("less than");
+            count=1;
+        };   
+        return count;
+      });
+      d3.selectAll(".char").classed("open", false);
+      d3.selectAll(".char").style("grid-row-start", "auto");
+      d3.selectAll(".char").style("grid-column-start", "auto");
+    })
 ;
-  d3
+
+d3
    .select("#ray")
    .on("click", function () {
-      d3.select(".open").select("h2").text("ray");
-   })
-;
+      d3.selectAll(".char").sort(function(a, b) {
+        let count = 0;
+        if(a['imgclass'] == 'ray' && b['imgclass'] != 'ray'){
+            console.log("greater than");
+            count=-1;
+        };
+        if(b['imgclass'] == 'ray' && a['imgclass'] != 'ray'){
+            console.log("less than");
+            count=1;
+        };   
+        return count;
+      });
+      d3.selectAll(".char").classed("open", false);
+      d3.selectAll(".char").style("grid-row-start", "auto");
+      d3.selectAll(".char").style("grid-column-start", "auto");
+    })
 </script>
