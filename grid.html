@@ -7,9 +7,9 @@
 <!-- HTML -->
 <div id="filters">
     Order by: 
-      <a id="fish" >Fish</a> |
-      <a id="crab" >Crab</a> |
-      <a id="ray" >Ray</a> |
+      <a id="fish" >Fish-Like</a> |
+      <a id="crab" >Crab-Like</a> |
+      <a id="ray" >Laterally-Flattened</a> |
       <a id="update_data" >Update</a> |
   </div>
 <style>
@@ -70,7 +70,13 @@ body, a {
 //Load in character data
 d3.json("http://localhost:9000/images.json").then(function(data){
     createVis(data);
+d3.selectAll(".char").sort(function(x, y){
+  return d3.ascending(x['imgclass'], y['imgclass']);
 });
+d3.selectAll(".char").style("grid-row-start", "auto");
+d3.selectAll(".char").style("grid-column-start", "auto");
+});
+
 
 d3
    .select("#update_data")
@@ -80,7 +86,7 @@ d3
 ;
 
 function updateData() {
-    d3.json("http://localhost:9000/images3.json").then(function(data){
+    d3.json("http://localhost:9000/annotations_subsample.json").then(function(data){
             createVis(data);
     });
 }
@@ -198,11 +204,11 @@ d3
    .on("click", function () {
       d3.selectAll(".char").sort(function(a, b) {
         let count = 0;
-        if(a['imgclass'] == 'ray' && b['imgclass'] != 'ray'){
+        if(a['imgclass'] == 'ray' && b['imgclass'] != 'laterally-flattened'){
             console.log("greater than");
             count=-1;
         };
-        if(b['imgclass'] == 'ray' && a['imgclass'] != 'ray'){
+        if(b['imgclass'] == 'ray' && a['imgclass'] != 'laterally-flattened'){
             console.log("less than");
             count=1;
         };   
