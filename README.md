@@ -5,7 +5,7 @@ This is a simple web app to display a grid of images fetched from urls specified
 
 As currently structured, the app expects entries as formatted in images.json. This has an array element called images, which contains individual objects which have the fields 'imgurl' and 'imgclass'. These objects are used to create the grid elements, and the labels for them.
 
-## TODO (This section is large):
+## TODO (There is much):
 * Make a handler for constructing GET requests, and bind that to the Update routine (probably rename it as load)
 * Make a function for handling expected elements in the GET request, to allow flexible informationt to be displayed in each element
 * Create sidebar area for "expanded" information to be displayed when an element is clicked
