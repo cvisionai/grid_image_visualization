@@ -7,11 +7,13 @@ As currently structured, the app expects entries as formatted in images.json. Th
 
 ## TODO (There is much):
 * Make a handler for constructing GET requests, and bind that to the Update routine (probably rename it as load)
-* Make a function for handling expected elements in the GET request, to allow flexible informationt to be displayed in each element
+* Incorporate authentication for image urls
+* Make a function for handling expected elements in the GET request, to allow flexible information to be displayed in each element
 * Create sidebar area for "expanded" information to be displayed when an element is clicked
 * Create page sidebar area for various interactions (e.g. constructing filters for input into the GET request, viewing label tree elements, etc.)
 * Create a handler for constructing POST requests
-* Separate html, css, and js files
+* ~~Separate html, css, and js files
+* ~~Lazy loading of images, to reduce network load
 * Many others I haven't thought of
 
 
