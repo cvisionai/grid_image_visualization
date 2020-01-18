@@ -12,8 +12,8 @@ As currently structured, the app expects entries as formatted in images.json. Th
 * Create sidebar area for "expanded" information to be displayed when an element is clicked
 * Create page sidebar area for various interactions (e.g. constructing filters for input into the GET request, viewing label tree elements, etc.)
 * Create a handler for constructing POST requests
-* ~~Separate html, css, and js files
-* ~~Lazy loading of images, to reduce network load
+* ~~Separate html, css, and js files~~
+* ~~Lazy loading of images, to reduce network load~~
 * Many others I haven't thought of
 
 
