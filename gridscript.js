@@ -1,5 +1,5 @@
 //Load in character data
-d3.json("http://localhost:9000/images.json").then(function(data){
+d3.json("./images_local.json").then(function(data){
     createVis(data);
 d3.selectAll(".char").sort(function(x, y){
   return d3.ascending(x['imgclass'], y['imgclass']);
@@ -16,7 +16,7 @@ d3
 ;
 
 function updateData() {
-    d3.json("http://localhost:9000/annotations_subsample.json").then(function(data){
+    d3.json("./annotations_subsample.json").then(function(data){
             createVis(data);
     });
 }
@@ -39,6 +39,15 @@ function createVis(my_data) {
       enter => {enter
         .append("div")
         .attr("class", "char")
+        .attr("data-bg", function(d){
+            return 'url("'+d.imgurl+'?raw=true")';
+            })
+        .append("div")
+        .attr("class", "charContent")
+        .append("h2")
+        .text(function(d,i){
+            return d.imgclass;
+        })
         ;
         char_click = enter
           .selectAll(".char")
@@ -58,34 +67,18 @@ function createVis(my_data) {
         })
       },
       exit => exit.remove());
-
-  d3.selectAll(".char")
-    .append("img")
-    .attr("class","lazy")
-    .attr("data-src", function(d) {
-        return d.imgurl;});
-
-  d3.selectAll(".char")
-        .append("div")
-        .attr("class", "charContent")
-        .append("h2")
-        .text(function(d,i){
-          return d.imgclass;
-        });
-
-      lazyLoadInstance.update();
+ 
+  lazyLoadInstance.update();
 }
 
-  d3
-   .select("#fish")
-   .on("click", function () {
-      d3.selectAll(".char").sort(function(a, b) {
+function species_sort(species){
+    d3.selectAll(".char").sort(function(a, b) {
         let count = 0;
-        if(a['imgclass'] == 'fish' && b['imgclass'] != 'fish'){
+        if(a['imgclass'] == species && b['imgclass'] != species){
             console.log("greater than");
             count=-1;
         };
-        if(b['imgclass'] == 'fish' && a['imgclass'] != 'fish'){
+        if(b['imgclass'] == species && a['imgclass'] != species){
             console.log("less than");
             count=1;
         };   
@@ -94,48 +87,28 @@ function createVis(my_data) {
       d3.selectAll(".char").classed("open", false);
       d3.selectAll(".char").style("grid-row-start", "auto");
       d3.selectAll(".char").style("grid-column-start", "auto");
-    })
-;
+}
+
 d3
-   .select("#crab")
-   .on("click", function () {
-      d3.selectAll(".char").sort(function(a, b) {
-        let count = 0;
-        if(a['imgclass'] == 'crab' && b['imgclass'] != 'crab'){
-            console.log("greater than");
-            count=-1;
-        };
-        if(b['imgclass'] == 'crab' && a['imgclass'] != 'crab'){
-            console.log("less than");
-            count=1;
-        };   
-        return count;
-      });
-      d3.selectAll(".char").classed("open", false);
-      d3.selectAll(".char").style("grid-row-start", "auto");
-      d3.selectAll(".char").style("grid-column-start", "auto");
-    })
+  .select("#fish")
+  .on("click", function () {
+      species_sort("fish")
+  })
 ;
 
 d3
-   .select("#ray")
-   .on("click", function () {
-      d3.selectAll(".char").sort(function(a, b) {
-        let count = 0;
-        if(a['imgclass'] == 'ray' && b['imgclass'] != 'laterally-flattened'){
-            console.log("greater than");
-            count=-1;
-        };
-        if(b['imgclass'] == 'ray' && a['imgclass'] != 'laterally-flattened'){
-            console.log("less than");
-            count=1;
-        };   
-        return count;
-      });
-      d3.selectAll(".char").classed("open", false);
-      d3.selectAll(".char").style("grid-row-start", "auto");
-      d3.selectAll(".char").style("grid-column-start", "auto");
-    })
+  .select("#crab")
+  .on("click", function () {
+      species_sort("crab")
+  })
+;
+
+d3
+  .select("#ray")
+  .on("click", function () {
+      species_sort("ray")
+  })
+;
 
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
@@ -152,6 +125,5 @@ document.addEventListener('keydown', function(e) {
 });
 
 var lazyLoadInstance = new LazyLoad({
-        elements_selector: ".lazy"
-        // ... more custom settings?
+        elements_selector: ".char"
     });
