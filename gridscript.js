@@ -1,8 +1,8 @@
 //Load in character data
-d3.json("./images_local.json").then(function(data){
+d3.json("https://project2501a.duckdns.org/rest/EntityMedias/1?attribute=tator_user_sections%3A%3ATest_Images&format=json").then(function(data){
     createVis(data);
 d3.selectAll(".char").sort(function(x, y){
-  return d3.ascending(x['imgclass'], y['imgclass']);
+  return d3.ascending(x['name'], y['name']);
 });
 d3.selectAll(".char").style("grid-row-start", "auto");
 d3.selectAll(".char").style("grid-column-start", "auto");
@@ -16,7 +16,7 @@ d3
 ;
 
 function updateData() {
-    d3.json("./annotations_subsample.json").then(function(data){
+    d3.json("https://project2501a.duckdns.org/rest/EntityMedias/1?attribute=tator_user_sections%3A%3ATest_Images&format=json").then(function(data){
             createVis(data);
     });
 }
@@ -34,27 +34,27 @@ var captionText = document.getElementById("caption");
 function createVis(my_data) {
   chars = grid
     .selectAll("div")
-    .data(my_data.images, function(d) {return d.imgurl})
+    .data(my_data, function(d) {return d.url})
     .join(
       enter => {enter
         .append("div")
         .attr("class", "char")
         .attr("data-bg", function(d){
-            return 'url("'+d.imgurl+'?raw=true")';
+            return 'url("'+d.url+'?raw=true")';
             })
         .append("div")
         .attr("class", "charContent")
         .append("h2")
         .text(function(d,i){
-            return d.imgclass;
+            return d.name;
         })
         ;
         char_click = enter
           .selectAll(".char")
           .on("click", function(d, i) {
                 modal.style.display = "block";
-                modalImg.src = d.imgurl;
-                captionText.innerHTML = d.imgclass;
+                modalImg.src = d.url;
+                captionText.innerHTML = d.name;
           });
       },
       update => {
@@ -63,7 +63,7 @@ function createVis(my_data) {
         .attr("class", "charContent")
         .append("h2")
         .text(function(d,i){
-          return d.imgclass;
+          return d.name;
         })
       },
       exit => exit.remove());
@@ -74,11 +74,11 @@ function createVis(my_data) {
 function species_sort(species){
     d3.selectAll(".char").sort(function(a, b) {
         let count = 0;
-        if(a['imgclass'] == species && b['imgclass'] != species){
+        if(a['name'] == species && b['name'] != species){
             console.log("greater than");
             count=-1;
         };
-        if(b['imgclass'] == species && a['imgclass'] != species){
+        if(b['name'] == species && a['name'] != species){
             console.log("less than");
             count=1;
         };   
